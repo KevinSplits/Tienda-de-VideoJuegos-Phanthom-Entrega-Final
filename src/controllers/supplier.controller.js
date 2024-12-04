@@ -11,14 +11,13 @@ export const getSuppliers = async (req, res) => {
 
 export const createSupplier = async (req, res) => {
   try {
-    const { companyName, contactName, phoneNumber, email, country, date } = req.body;
+    const { companyName, contactName, phoneNumber, email, country } = req.body;
     const newSupplier = new Supplier({
       companyName,
       contactName,
       phoneNumber,
       email,
       country,
-      date,
       user: req.user.id,
     });
     await newSupplier.save();
@@ -42,10 +41,10 @@ export const deleteSupplier = async (req, res) => {
 
 export const updateSupplier = async (req, res) => {
   try {
-    const { companyName, contactName, phoneNumber, email, country, date } = req.body;
+    const { companyName, contactName, phoneNumber, email, country } = req.body;
     const supplierUpdated = await Supplier.findOneAndUpdate(
       { _id: req.params.id },
-      { companyName, contactName, phoneNumber, email, country, date },
+      { companyName, contactName, phoneNumber, email, country },
       { new: true }
     );
     return res.json(supplierUpdated);

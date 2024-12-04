@@ -8,5 +8,4 @@ export const createSupplierSchema = z.object({
   phoneNumber: z.string().optional(),
   email: z.string().optional(),
   country: z.string().optional(),
-  date: z.string().datetime().optional(),
 });

@@ -9,7 +9,7 @@ import {
 
 import { authRequired } from "../middlewares/validateToken.js";
 import { validateSchema } from "../middlewares/validator.middleware.js";
-import { createTaskSchema } from "../schemas/supplier.schema.jss";
+import { createSupplierSchema } from "../schemas/supplier.schema.js";
 
 const router = Router();
 

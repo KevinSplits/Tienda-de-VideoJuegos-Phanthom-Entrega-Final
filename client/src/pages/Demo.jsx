@@ -8,7 +8,6 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
-import TablaProveedor from './Suppliers';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
@@ -31,12 +30,13 @@ import Perfil from './UserOptions';
 import PreguntasFrecuentes from './Faqs';
 import CentroDeTickets from './TicketCenter';
 import Analisis from './Analysis';
-import { Link } from 'react-router-dom'; // Asegúrate de tener react-router-dom instalado
-import { Icon } from '@mui/material'; // Importa el icono de Material UI
 import { useAuth } from '../context/AuthContext'; 
 import { TaskProvider } from '../context/TasksContext';
 import { ProductoProvider} from '../context/ProductosContext'
 import TablaProductos from './Products';
+import { SupplierProvider } from '../context/SuppliersContext';
+import SuppliersTable from './Suppliers';
+
 
 const NAVIGATION = [
   {
@@ -289,7 +289,9 @@ function TareasContent() {
 function ProveedoresContent() {
   return (
     <Box>
-      <TablaProveedor />
+      <SupplierProvider>
+        <SuppliersTable />
+      </SupplierProvider>
     </Box>
   );
 }
