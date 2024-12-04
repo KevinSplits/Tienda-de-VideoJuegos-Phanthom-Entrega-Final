@@ -35,6 +35,8 @@ import { Link } from 'react-router-dom'; // Asegúrate de tener react-router-dom
 import { Icon } from '@mui/material'; // Importa el icono de Material UI
 import { useAuth } from '../context/AuthContext'; 
 import { TaskProvider } from '../context/TasksContext';
+import { ProductoProvider} from '../context/ProductosContext'
+import TablaProductos from './Products';
 
 const NAVIGATION = [
   {
@@ -295,6 +297,9 @@ function ProveedoresContent() {
 function ProductosContent() {
   return (
     <Box>
+      <ProductoProvider>
+      < TablaProductos/>
+      </ProductoProvider>
     </Box>
   );
 }
