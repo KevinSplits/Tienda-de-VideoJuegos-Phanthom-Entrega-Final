@@ -7,7 +7,7 @@ import authRoutes from "./routes/auth.routes.js";
 import taskRoutes from './routes/task.routes.js';
 import productoRoutes from './routes/productos.routes.js';
 import supplierRoutes from'./routes/supplier.routes.js'
-
+import clienteRoutes from './routes/clientes.routes.js'
 const app = express();
 
 app.use(cors({
@@ -22,4 +22,5 @@ app.use('/api', authRoutes);
 app.use('/api', taskRoutes);
 app.use('/api', productoRoutes);
 app.use('/api',supplierRoutes);
+app.use('/api',clienteRoutes);
 export default app;

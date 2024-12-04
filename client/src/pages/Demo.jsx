@@ -36,6 +36,7 @@ import { ProductoProvider} from '../context/ProductosContext'
 import TablaProductos from './Products';
 import { SupplierProvider } from '../context/SuppliersContext';
 import SuppliersTable from './Suppliers';
+import { ClienteProvider } from '../context/ClientesContext'
 
 
 const NAVIGATION = [
@@ -309,7 +310,9 @@ function ProductosContent() {
 function ClientesContent() {
   return (
     <Box>
+      <ClienteProvider>
       <TablaClientes />
+      </ClienteProvider>
     </Box>
   );
 }
