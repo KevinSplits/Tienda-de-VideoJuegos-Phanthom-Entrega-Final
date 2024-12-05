@@ -17,7 +17,6 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import TablaTarea from './TasksTable'
 import PersonIcon from '@mui/icons-material/Person';
 import TablaClientes from './Customers';
-import TablaVentas from './Sales';
 import ResumenVentas from './SalesSummary';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import StarIcon from '@mui/icons-material/Star';
@@ -36,6 +35,8 @@ import { ProductoProvider} from '../context/ProductosContext'
 import TablaProductos from './Products';
 import { SupplierProvider } from '../context/SuppliersContext';
 import SuppliersTable from './Suppliers';
+import SalesTable from './Sales';
+import { SaleProvider } from '../context/SalesContext';
 
 
 const NAVIGATION = [
@@ -317,7 +318,9 @@ function ClientesContent() {
 function VentasContent() {
   return (
     <Box>
-      <TablaVentas />
+      <SaleProvider>
+        <SalesTable />
+      </SaleProvider>
     </Box>
   );
 }
