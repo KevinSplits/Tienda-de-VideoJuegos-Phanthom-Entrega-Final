@@ -59,6 +59,8 @@ export default function ClientesTable() {
     phone: "",
     address: "",
   });
+  const [errors, setErrors] = useState({});
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
     getClientes();
@@ -72,6 +74,8 @@ export default function ClientesTable() {
       phone: "",
       address: "",
     });
+    setErrors({});
+    setShowErrors(false);
     setOpen(true);
   };
 
@@ -79,15 +83,55 @@ export default function ClientesTable() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    // Restringir teléfono a números y hasta 9 dígitos
+    if (name === "phone") {
+      const isValidPhone = /^[0-9]{0,9}$/.test(value);
+      if (!isValidPhone) return;
+    }
+
     setClienteData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (!value.trim()) {
+      error = "Este campo es obligatorio.";
+    } else {
+      if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        error = "Correo inválido.";
+      } else if (name === "phone") {
+        if (!/^\d{9}$/.test(value)) {
+          error = "El teléfono debe tener exactamente 9 dígitos.";
+        }
+      }
+    }
+
+    return error;
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(clienteData).forEach((field) => {
+      const error = validateField(field, clienteData[field]);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async () => {
+    setShowErrors(true); // Muestra los errores al presionar el botón
+    if (!validateForm()) return;
+
     if (editMode && selectedCliente) {
-      await updateCliente(selectedCliente._id, clienteData); // Usar clienteData
+      await updateCliente(selectedCliente._id, clienteData);
     } else {
       await createCliente(clienteData);
     }
@@ -95,13 +139,7 @@ export default function ClientesTable() {
     handleClose();
   };
 
-  const handleDelete = async (id) => {
-    await deleteCliente(id);
-    getClientes();
-  };
-
   const handleEdit = (cliente) => {
-    console.log("Cliente a editar:", cliente._id); // Verificar si el cliente tiene un _id
     setSelectedCliente(cliente);
     setClienteData({
       name: cliente.name,
@@ -110,7 +148,14 @@ export default function ClientesTable() {
       address: cliente.address,
     });
     setEditMode(true);
+    setErrors({});
+    setShowErrors(false);
     setOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    await deleteCliente(id);
+    getClientes();
   };
 
   return (
@@ -198,48 +243,29 @@ export default function ClientesTable() {
             {editMode ? "Editar Cliente" : "Agregar Nuevo Cliente"}
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                label="Nombre"
-                fullWidth
-                name="name"
-                value={clienteData.name}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Correo"
-                fullWidth
-                name="email"
-                value={clienteData.email}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Teléfono"
-                fullWidth
-                name="phone"
-                value={clienteData.phone}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                label="Dirección"
-                fullWidth
-                name="address"
-                value={clienteData.address}
-                onChange={handleInputChange}
-              />
-            </Grid>
+            {[
+              { field: "name", label: "Nombre" },
+              { field: "email", label: "Correo" },
+              { field: "phone", label: "Teléfono" },
+              { field: "address", label: "Dirección" },
+            ].map(({ field, label }) => (
+              <Grid item xs={12} key={field}>
+                <TextField
+                  label={label}
+                  fullWidth
+                  name={field}
+                  value={clienteData[field]}
+                  onChange={handleInputChange}
+                  error={showErrors && !!errors[field]}
+                  helperText={showErrors && errors[field]}
+                />
+              </Grid>
+            ))}
             <Grid item xs={12}>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
-                disabled={!clienteData.name || !clienteData.email || !clienteData.phone}
               >
                 {editMode ? "Guardar Cambios" : "Guardar"}
               </Button>
