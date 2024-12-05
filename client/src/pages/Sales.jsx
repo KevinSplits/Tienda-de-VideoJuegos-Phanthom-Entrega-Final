@@ -24,19 +24,68 @@ export default function SalesTable() {
   const [open, setOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedSale, setSelectedSale] = useState(null);
-  const [saleData, setSaleData] = useState({ customerName: "", productName: "", amount: "", unitPrice: "", total: 0});
+  const [saleData, setSaleData] = useState({
+    customerName: "",
+    productName: "",
+    amount: "",
+    unitPrice: "",
+    total: 0,
+  });
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     getSales();
   }, []);
 
   const handleOpen = () => {
-    console.log("Abriendo modal...");
     setEditMode(false);
-    setSaleData({ customerName: "", productName: "", amount: "", unitPrice: "", total: 0});
+    setSaleData({
+      customerName: "",
+      productName: "",
+      amount: "",
+      unitPrice: "",
+      total: 0,
+    });
     setOpen(true);
   };
-  
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!saleData.customerName.trim()) {
+      newErrors.customerName = "El nombre del cliente es obligatorio.";
+    } else if (
+      saleData.customerName.length < 3 ||
+      saleData.customerName.length > 50
+    ) {
+      newErrors.customerName = "Este campo debe tener entre 3 y 50 caracteres.";
+    }
+
+    if (!saleData.productName.trim()) {
+      newErrors.productName = "El nombre del producto es obligatorio.";
+    } else if (
+      saleData.productName.length < 3 ||
+      saleData.productName.length > 100
+    ) {
+      newErrors.productName = "Este campo debe tener entre 3 y 100 caracteres.";
+    }
+
+    if (!saleData.amount) {
+      newErrors.amount = "La cantidad es obligatoria.";
+    } else if (!/^\d+$/.test(saleData.amount) || parseInt(saleData.amount, 10) <= 0) {
+      newErrors.amount = "Debe ser un número entero positivo.";
+    }
+
+    if (!saleData.unitPrice) {
+      newErrors.unitPrice = "El precio unitario es obligatorio.";
+    } else if (!/^\d+(\.\d{1,2})?$/.test(saleData.unitPrice)) {
+      newErrors.unitPrice = "Debe ser un número válido con hasta dos decimales.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleClose = () => setOpen(false);
 
@@ -55,7 +104,7 @@ export default function SalesTable() {
   };
 
   const handleSubmit = async () => {
-    console.log("Datos enviados:", saleData);
+    if (!validate()) return;
     if (editMode && selectedSale) {
       await updateSale(selectedSale._id, saleData);
     } else {
@@ -72,7 +121,13 @@ export default function SalesTable() {
 
   const handleEdit = (sale) => {
     setSelectedSale(sale);
-    setSaleData({ customerName: sale.customerName, productName: sale.productName, amount: sale.amount, unitPrice: sale.unitPrice, total: sale.total});
+    setSaleData({
+      customerName: sale.customerName,
+      productName: sale.productName,
+      amount: sale.amount,
+      unitPrice: sale.unitPrice,
+      total: sale.total,
+    });
     setEditMode(true);
     setOpen(true);
   };
@@ -90,37 +145,21 @@ export default function SalesTable() {
         px: { xs: 2, md: 3 },
       }}
     >
-      <Grid
-        container
-        justifyContent="space-between"
-        alignItems="center"
-        sx={{ width: "100%", mb: 2 }}
-      >
+      <Grid container justifyContent="space-between" alignItems="center" sx={{ width: "100%", mb: 2 }}>
         <Grid item>
           <Typography variant="h4" sx={{ fontSize: { xs: "1.5rem", md: "2rem" } }}>
             Ventas
           </Typography>
         </Grid>
         <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleOpen}
-            startIcon={<AddIcon />}
-          >
+          <Button variant="contained" color="primary" onClick={handleOpen} startIcon={<AddIcon />}>
             Agregar
           </Button>
         </Grid>
       </Grid>
 
       <div style={{ width: "100%", overflowX: "auto" }}>
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            border: "1px solid #ddd",
-          }}
-        >
+        <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #ddd" }}>
           <thead>
             <tr>
               <th style={{ padding: "10px", textAlign: "center" }}>Nombre del Cliente</th>
@@ -140,20 +179,10 @@ export default function SalesTable() {
                 <td style={{ padding: "10px", textAlign: "center" }}>{sale.unitPrice}</td>
                 <td style={{ padding: "10px", textAlign: "center" }}>{sale.total}</td>
                 <td style={{ padding: "10px", textAlign: "center" }}>
-                  <Button
-                    onClick={() => handleEdit(sale)}
-                    color="primary"
-                    size="small"
-                    startIcon={<EditIcon />}
-                  >
+                  <Button onClick={() => handleEdit(sale)} color="primary" size="small" startIcon={<EditIcon />}>
                     Editar
                   </Button>
-                  <Button
-                    onClick={() => handleDelete(sale._id)}
-                    color="secondary"
-                    size="small"
-                    startIcon={<DeleteIcon />}
-                  >
+                  <Button onClick={() => handleDelete(sale._id)} color="secondary" size="small" startIcon={<DeleteIcon />}>
                     Eliminar
                   </Button>
                 </td>
@@ -163,7 +192,6 @@ export default function SalesTable() {
         </table>
       </div>
 
-      {/* Modal para agregar o editar tarea */}
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
@@ -189,15 +217,19 @@ export default function SalesTable() {
                 name="customerName"
                 value={saleData.customerName}
                 onChange={handleInputChange}
+                error={!!errors.customerName}
+                helperText={errors.customerName}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Nombre de Producto"
+                label="Nombre del Producto"
                 fullWidth
                 name="productName"
                 value={saleData.productName}
                 onChange={handleInputChange}
+                error={!!errors.productName}
+                helperText={errors.productName}
               />
             </Grid>
             <Grid item xs={12}>
@@ -208,6 +240,8 @@ export default function SalesTable() {
                 value={saleData.amount}
                 onChange={handleInputChange}
                 type="number"
+                error={!!errors.amount}
+                helperText={errors.amount}
               />
             </Grid>
             <Grid item xs={12}>
@@ -218,20 +252,23 @@ export default function SalesTable() {
                 value={saleData.unitPrice}
                 onChange={handleInputChange}
                 type="number"
+                error={!!errors.unitPrice}
+                helperText={errors.unitPrice}
               />
             </Grid>
             <Grid item xs={12}>
-                            <Typography variant="subtitle1">
-                                Total: ${saleData.total}
-                            </Typography>
-                        </Grid>
+              <TextField
+                label="Total"
+                fullWidth
+                value={saleData.total.toFixed(2)}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Grid>
             <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                {editMode ? "Guardar Cambios" : "Guardar"}
+              <Button variant="contained" fullWidth onClick={handleSubmit}>
+                {editMode ? "Actualizar" : "Guardar"}
               </Button>
             </Grid>
           </Grid>

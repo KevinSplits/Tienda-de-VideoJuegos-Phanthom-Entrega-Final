@@ -26,6 +26,8 @@ export default function SuppliersTable() {
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const [supplierData, setSupplierData] = useState({ companyName: "", contactName: "", phoneNumber: "", email: "", country: "" });
 
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     getSuppliers();
   }, []);
@@ -38,6 +40,56 @@ export default function SuppliersTable() {
 
   const handleClose = () => setOpen(false);
 
+  
+  const validate = () => {
+    const newErrors = {};
+  
+    // Validación para Nombre de la Empresa
+    if (!supplierData.companyName.trim()) {
+      newErrors.companyName = "El nombre de la empresa es obligatorio.";
+    } else if (supplierData.companyName.length < 3 || supplierData.companyName.length > 50) {
+      newErrors.companyName = "Este campo debe tener entre 3 y 50 caracteres.";
+    }
+  
+    // Validación para Nombre del Contacto
+    if (!supplierData.contactName.trim()) {
+      newErrors.contactName = "El nombre del contacto es obligatorio.";
+    } else if (supplierData.contactName.length < 3 || supplierData.contactName.length > 50) {
+      newErrors.contactName = "Este campo debe tener entre 3 y 50 caracteres.";
+    }
+  
+    // Validación para Número de Teléfono
+    if (!supplierData.phoneNumber.trim()) {
+      newErrors.phoneNumber = "El número de teléfono es obligatorio.";
+    } else if (!/^\d{7,15}$/.test(supplierData.phoneNumber)) {
+      newErrors.phoneNumber = "Este campo debe contener entre 7 y 15 dígitos.";
+    }
+  
+    // Validación para Correo Electrónico
+    if (!supplierData.email.trim()) {
+      newErrors.email = "El correo electrónico es obligatorio.";
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(supplierData.email) ||
+      supplierData.email.length > 100
+    ) {
+      newErrors.email = "Este campo debe ser válido y no superar los 100 caracteres.";
+    }
+  
+    // Validación para País
+    if (!supplierData.country.trim()) {
+      newErrors.country = "El país es obligatorio.";
+    } else if (supplierData.country.length < 2 || supplierData.country.length > 50) {
+      newErrors.country = "Este campo debe tener entre 2 y 50 caracteres.";
+    }
+  
+    // Establece los errores encontrados
+    setErrors(newErrors);
+  
+    // Devuelve `true` si no hay errores
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSupplierData((prevData) => ({
@@ -47,6 +99,7 @@ export default function SuppliersTable() {
   };
 
   const handleSubmit = async () => {
+    if (!validate()) return; 
     if (editMode && selectedSupplier) {
       await updateSupplier(selectedSupplier._id, supplierData);
     } else {
@@ -60,6 +113,8 @@ export default function SuppliersTable() {
     await deleteSupplier(id);
     getSuppliers();
   };
+
+  
 
   const handleEdit = (supplier) => {
     setSelectedSupplier(supplier);
@@ -170,7 +225,7 @@ export default function SuppliersTable() {
           }}
         >
           <Typography variant="h6" gutterBottom>
-            {editMode ? "Editar Proveedor" : "Agregar Nueva Proveedor"}
+            {editMode ? "Editar Proveedor" : "Agregar Nuevo Proveedor"}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -180,6 +235,8 @@ export default function SuppliersTable() {
                 name="companyName"
                 value={supplierData.companyName}
                 onChange={handleInputChange}
+                error={!!errors.companyName} 
+                helperText={errors.companyName} 
               />
             </Grid>
             <Grid item xs={12}>
@@ -189,6 +246,8 @@ export default function SuppliersTable() {
                 name="contactName"
                 value={supplierData.contactName}
                 onChange={handleInputChange}
+                error={!!errors.contactName} 
+                helperText={errors.contactName} 
               />
             </Grid>
             <Grid item xs={12}>
@@ -198,6 +257,8 @@ export default function SuppliersTable() {
                 name="phoneNumber"
                 value={supplierData.phoneNumber}
                 onChange={handleInputChange}
+                error={!!errors.phoneNumber}
+                helperText={errors.phoneNumber}
               />
             </Grid>
             <Grid item xs={12}>
@@ -207,6 +268,8 @@ export default function SuppliersTable() {
                 name="email"
                 value={supplierData.email}
                 onChange={handleInputChange}
+                error={!!errors.email} 
+                helperText={errors.email} 
               />
             </Grid>
             <Grid item xs={12}>
@@ -216,6 +279,8 @@ export default function SuppliersTable() {
                 name="country"
                 value={supplierData.country}
                 onChange={handleInputChange}
+                error={!!errors.country} 
+                helperText={errors.country} 
               />
             </Grid>
             <Grid item xs={12}>
