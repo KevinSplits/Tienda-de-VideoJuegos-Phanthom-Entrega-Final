@@ -62,9 +62,22 @@ export default function ProductosTable() {
     price: "",
   });
 
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     getProductos();
   }, []);
+
+  const validate = () => {
+    const newErrors = {};
+    if (!productoData.title.trim()) newErrors.title = "El nombre del juego es obligatorio.";
+    if (!productoData.description.trim()) newErrors.description = "La descripción es obligatoria.";
+    if (!productoData.platform.trim()) newErrors.platform = "La plataforma es obligatoria.";
+    if (!productoData.price || isNaN(productoData.price) || productoData.price <= 0)
+      newErrors.price = "El precio debe ser un número mayor a 0.";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleOpen = () => {
     setEditMode(false);
@@ -74,6 +87,7 @@ export default function ProductosTable() {
       platform: "",
       price: "",
     });
+    setErrors({});
     setOpen(true);
   };
 
@@ -85,11 +99,17 @@ export default function ProductosTable() {
       ...prevData,
       [name]: name === "price" ? (value ? parseFloat(value) : "") : value,
     }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
   };
 
   const handleSubmit = async () => {
+    if (!validate()) return;
+
     if (editMode && selectedProducto) {
-      await updateProducto(selectedProducto._id, productoData); // Usar productoData
+      await updateProducto(selectedProducto._id, productoData);
     } else {
       await createProducto(productoData);
     }
@@ -103,7 +123,6 @@ export default function ProductosTable() {
   };
 
   const handleEdit = (producto) => {
-    console.log("Producto a editar:", producto._id); // Verificar si el producto tiene un _id
     setSelectedProducto(producto);
     setProductoData({
       title: producto.title,
@@ -112,6 +131,7 @@ export default function ProductosTable() {
       price: producto.price,
     });
     setEditMode(true);
+    setErrors({});
     setOpen(true);
   };
 
@@ -181,7 +201,6 @@ export default function ProductosTable() {
         </table>
       </div>
 
-      {/* Modal para agregar o editar producto */}
       <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
@@ -207,6 +226,8 @@ export default function ProductosTable() {
                 name="title"
                 value={productoData.title}
                 onChange={handleInputChange}
+                error={!!errors.title}
+                helperText={errors.title}
               />
             </Grid>
             <Grid item xs={12}>
@@ -216,6 +237,8 @@ export default function ProductosTable() {
                 name="description"
                 value={productoData.description}
                 onChange={handleInputChange}
+                error={!!errors.description}
+                helperText={errors.description}
               />
             </Grid>
             <Grid item xs={12}>
@@ -225,6 +248,8 @@ export default function ProductosTable() {
                 name="platform"
                 value={productoData.platform}
                 onChange={handleInputChange}
+                error={!!errors.platform}
+                helperText={errors.platform}
               />
             </Grid>
             <Grid item xs={12}>
@@ -235,6 +260,8 @@ export default function ProductosTable() {
                 name="price"
                 value={productoData.price}
                 onChange={handleInputChange}
+                error={!!errors.price}
+                helperText={errors.price}
               />
             </Grid>
             <Grid item xs={12}>
@@ -242,7 +269,6 @@ export default function ProductosTable() {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
-                disabled={!productoData.title || !productoData.price}
               >
                 {editMode ? "Guardar Cambios" : "Guardar"}
               </Button>
