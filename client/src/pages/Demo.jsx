@@ -35,6 +35,7 @@ import { ProductoProvider} from '../context/ProductosContext'
 import TablaProductos from './Products';
 import { SupplierProvider } from '../context/SuppliersContext';
 import SuppliersTable from './Suppliers';
+import { ClienteProvider } from '../context/ClientesContext'
 import SalesTable from './Sales';
 import { SaleProvider } from '../context/SalesContext';
 
@@ -310,7 +311,9 @@ function ProductosContent() {
 function ClientesContent() {
   return (
     <Box>
+      <ClienteProvider>
       <TablaClientes />
+      </ClienteProvider>
     </Box>
   );
 }

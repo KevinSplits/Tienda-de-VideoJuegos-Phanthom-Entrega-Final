@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.routes.js";
 import taskRoutes from './routes/task.routes.js';
 import productoRoutes from './routes/productos.routes.js';
 import supplierRoutes from'./routes/supplier.routes.js'
+import clienteRoutes from './routes/clientes.routes.js'
 import saleRoutes from './routes/sale.routes.js'
 
 const app = express();
@@ -23,5 +24,6 @@ app.use('/api', authRoutes);
 app.use('/api', taskRoutes);
 app.use('/api', productoRoutes);
 app.use('/api',supplierRoutes);
+app.use('/api',clienteRoutes);
 app.use('/api', saleRoutes);
 export default app;
