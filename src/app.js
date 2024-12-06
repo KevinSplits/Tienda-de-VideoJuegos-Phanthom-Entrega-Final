@@ -12,7 +12,7 @@ import saleRoutes from './routes/sale.routes.js'
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://front-mdw.netlify.app/',
     credentials: true,
 }));
 app.use(morgan('dev'));
