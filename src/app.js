@@ -10,6 +10,8 @@ import clienteRoutes from './routes/clientes.routes.js'
 import saleRoutes from './routes/sale.routes.js'
 
 const app = express();
+// Crear servidor HTTP con WebSocket
+const server = http.createServer(app);
 
 app.use(cors({
     origin: 'https://front-mdw.netlify.app/',
