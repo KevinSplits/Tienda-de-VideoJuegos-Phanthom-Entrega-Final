@@ -2,7 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import http from 'http'; 
+import http from 'http';
+import { Server } from 'socket.io'; 
 
 import authRoutes from "./routes/auth.routes.js";
 import productoRoutes from './routes/productos.routes.js';
