@@ -70,7 +70,7 @@ export function ClienteProvider({ children }) {
         getClientes,
         deleteCliente,
         createCliente,
-        getClientes,
+        getCliente,
         updateCliente,
       }}
     >

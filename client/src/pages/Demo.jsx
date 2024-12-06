@@ -14,7 +14,6 @@ import AnalyticsIcon from '@mui/icons-material/Analytics';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import TablaTarea from './TasksTable'
 import PersonIcon from '@mui/icons-material/Person';
 import TablaClientes from './Customers';
 import ResumenVentas from './SalesSummary';
@@ -30,7 +29,6 @@ import PreguntasFrecuentes from './Faqs';
 import CentroDeTickets from './TicketCenter';
 import Analisis from './Analysis';
 import { useAuth } from '../context/AuthContext'; 
-import { TaskProvider } from '../context/TasksContext';
 import { ProductoProvider} from '../context/ProductosContext'
 import TablaProductos from './Products';
 import { SupplierProvider } from '../context/SuppliersContext';
@@ -72,11 +70,6 @@ const NAVIGATION = [
     title: 'Gestión de Ventas',
     icon: <SellIcon />,
     children: [
-      {
-        segment: 'tareas',
-        title: 'Tareas',
-        icon: <SportsEsportsIcon />,
-      },
       {
         segment: 'proveedores',
         title: 'Proveedores',
@@ -278,15 +271,7 @@ function DashboardContent() {
   );
 }
 
-function TareasContent() {
-  return (
-    <Box>
-      <TaskProvider>
-      <TablaTarea />
-      </TaskProvider>
-    </Box>
-  );
-}
+
 
 function ProveedoresContent() {
   return (
@@ -398,8 +383,6 @@ function DemoPageContent({ pathname }) {
       return <ProveedoresContent />;
     case '/gestiondeventas/productos':
        return < ProductosContent/>;
-    case '/gestiondeventas/tareas':
-      return <TareasContent />;
     case '/gestiondeventas/clientes':
       return <ClientesContent />;
     case '/gestiondeventas/ventas':
