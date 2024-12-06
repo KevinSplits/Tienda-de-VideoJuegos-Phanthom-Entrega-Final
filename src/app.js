@@ -18,6 +18,16 @@ app.use(cors({
     origin: 'https://front-mdw.netlify.app/',
     credentials: true,
 }));
+
+// Configuración de CORS para WebSocket
+const io = new Server(server, {
+    cors: {
+      origin: 'https://front-mdw.netlify.app', // Permite solicitudes desde el frontend
+      methods: ['GET', 'POST'], // Métodos permitidos
+      credentials: true, // Permite las cookies
+    },
+  });
+
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
@@ -30,7 +40,7 @@ app.use('/api', saleRoutes);
 export default app;
 
 // Exportar el servidor para usarlo en otros archivos
-export { server };
+export { server, io};
 
 // Configuración para que el servidor escuche en el puerto especificado
 const PORT = process.env.PORT || 4000; // Usa el puerto de producción o 4000 en local
