@@ -16,7 +16,7 @@ const app = express();
 const server = http.createServer(app);
 
 app.use(cors({
-    origin: 'https://front-mdw.netlify.app/',
+    origin: 'https://front-mdw.netlify.app',
     credentials: true,
 }));
 
